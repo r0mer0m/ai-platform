@@ -3,17 +3,16 @@ from imports import *
 _re_br = re.compile(r'<\s*br\s*/?>', re.IGNORECASE)
 _spacy_tokenizer = spacy.load('en')
 
-def sub_br(x:str):
+def sub_br(x:str) -> str:
     ''' 
-    Replaces newline in HTML format (<br>) by \n
+    Replaces newline in HTML format (<br>) by \n in the text
     
-    :param x: 
-    :param splt_char: 
-    :return: 
+    :param x: input string
+    :return: output string
     '''
     return _re_br.sub("\n", x.lower())
 
-def split_sentece(x:str, splt_char:(list or tuple)=['.','!','?','\\n']): 
+def split_sentece(x:str, splt_char:(list or tuple)=['.','!','?','\\n']) -> list(str): 
     ''' 
     Splits document into sentences using the characters specified in the `splt_char` argument.
     
@@ -25,7 +24,7 @@ def split_sentece(x:str, splt_char:(list or tuple)=['.','!','?','\\n']):
     expression = ' |'.join(['\\'+c if c in special_char else c for c in splt_char])
     return re.split(expression, sub_br(x))
 
-def spacy_tok(x: str): 
+def spacy_tok(x: str) -> list(str): 
     '''
     Splits a sentence using Spacy tokenizer after applying `sub_br`.
     
@@ -34,7 +33,7 @@ def spacy_tok(x: str):
     '''
     return [tok.text for tok in _spacy_tokenizer.tokenizer(sub_br(x))]
 
-def create_vocab(paths:(list or pd.Series or tuple), encoding:str='utf-8', minimum:int=5):
+def create_vocab(paths:iter, encoding:str='utf-8', minimum:int=5) -> (dict,list):
     '''
     Creates the vocabulary using the provided `paths` to the documents.
     

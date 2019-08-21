@@ -33,7 +33,7 @@ class Attention(nn.Module):
 class HiererchicalAttention(nn.Module):
     
     def __init__(self, embedding_dim, hidden_size, vocab_size, bs, out_size,
-                dropout=0, max_words=MAX_WORDS, max_sentences=MAX_SENT):
+                max_words, max_sentences, dropout=0):
         
         super().__init__()
         
@@ -90,6 +90,6 @@ class HiererchicalAttention(nn.Module):
         
         return out.squeeze()
     
-    def initHidden(self, cuda=True):
+    def initHidden(self, device):
         hidden=torch.zeros(2, self.bs, self.hidden_size, requires_grad=False)
-        return hidden.cuda() if cuda else hidden
+        return hidden.to(device)

@@ -1,33 +1,34 @@
 from imports import *
 from text_processing import create_vocab, spacy_tok, split_sentece
 
-class doc_s_w(Dataset):
+class ha_dataset(Dataset):
     
-    def __init__(self, df, vocab2index, def_idx=1):
+    def __init__(self, data, vocab2index, unk_idx=1, encoding='utf-8'):
         
         # df = order_docs(df)
-        self.paths = df.file_paths
-        self.y = df.ratings.values - 1
-        self.def_idx = def_idx
+        self.data = data
+        self.unk_idx = unk_idx
         self.vocab2index = vocab2index
+        self.encoding = encoding
         
     def __len__(self,):
-        return len(self.y)
+        return len(self.data)
         
     def __getitem__(self, idx):
         
-        file = self.paths[idx]
-        doc_sent = split_sentece(file.read_text('utf-8'))
+        file = self.data[idx][0]
+        doc_sent = split_sentece(file.read_text(self.encoding))
         doc_sent_tok = [spacy_tok(sentence) for sentence in doc_sent]
         
-        x = [[self.vocab2index.get(w, self.def_idx) for w in s] for s in doc_sent_tok]
+        x = [[self.vocab2index.get(w, self.unk_idx) for w in s] for s in doc_sent_tok]
         
+        n_sent = len(x)
         max_n_words = max([len(s) for s in x])
         
-        return x, self.y[idx], len(x), max_n_words
+        return x, self.data[idx][1], n_sent, max_n_words
 
 
-def dynamic_word_sentece_padding(batch, max_sent, max_words):
+def dynamic_ws_padding(max_sent:int, max_words:int, batch:tuple):
     '''
     Batch-level dynamic padding.
     ''' 

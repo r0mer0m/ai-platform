@@ -1,5 +1,6 @@
 
 from tqdm import tqdm
+from functools import partial
 from pathlib import Path
 import pandas as pd
 import numpy as np

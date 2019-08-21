@@ -12,7 +12,7 @@ def sub_br(x:str) -> str:
     '''
     return _re_br.sub("\n", x.lower())
 
-def split_sentece(x:str, splt_char:(list or tuple)=['.','!','?','\\n']) -> list(str): 
+def split_sentece(x:str, splt_char: list or tuple =['.','!','?','\\n']) -> list: 
     ''' 
     Splits document into sentences using the characters specified in the `splt_char` argument.
     
@@ -24,7 +24,7 @@ def split_sentece(x:str, splt_char:(list or tuple)=['.','!','?','\\n']) -> list(
     expression = ' |'.join(['\\'+c if c in special_char else c for c in splt_char])
     return re.split(expression, sub_br(x))
 
-def spacy_tok(x: str) -> list(str): 
+def spacy_tok(x: str) -> list: 
     '''
     Splits a sentence using Spacy tokenizer after applying `sub_br`.
     
@@ -33,7 +33,7 @@ def spacy_tok(x: str) -> list(str):
     '''
     return [tok.text for tok in _spacy_tokenizer.tokenizer(sub_br(x))]
 
-def create_vocab(paths:iter, encoding:str='utf-8', minimum:int=5) -> (dict,list):
+def create_vocab(data:iter, encoding:str='utf-8', minimum:int=5) -> (dict,list):
     '''
     Creates the vocabulary using the provided `paths` to the documents.
     
@@ -42,10 +42,12 @@ def create_vocab(paths:iter, encoding:str='utf-8', minimum:int=5) -> (dict,list)
     :param minimum: Minimum (not included) occurrences for a token to be considered.
     :return: token 2 index mapping (dict),  index 2 token mapping (list)
     '''
+
     counts = Counter()
-    for path in paths: 
+    print('Creating vocabulary ...')
+    for path in tqdm(data[:,0]): 
         counts.update(spacy_tok(path.read_text(encoding=encoding)))
-        
+
     # create mappings
     t2i = {"<PAD>":0, "<UNK>":1}
     i2t = ["<PAD>", "<UNK>"]
